@@ -12,7 +12,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'selflab',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/icon.png',
   scheme: 'selflab',
   userInterfaceStyle: 'dark',
   backgroundColor: '#0A0B0E',
@@ -28,8 +27,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: 'com.selflab.app',
     adaptiveIcon: {
       backgroundColor: '#0A0B0E',
-      foregroundImage: './assets/images/android-icon-foreground.png',
-      monochromeImage: './assets/images/android-icon-monochrome.png',
     },
     permissions: [
       'ACTIVITY_RECOGNITION',
@@ -47,7 +44,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   web: {
     output: 'static',
-    favicon: './assets/images/favicon.png',
   },
   plugins: [
     'expo-router',
@@ -57,7 +53,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-splash-screen',
       {
         backgroundColor: '#0A0B0E',
-        image: './assets/images/splash-icon.png',
         imageWidth: 120,
       },
     ],
