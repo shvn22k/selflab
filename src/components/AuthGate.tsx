@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profile';
 import { useSettings } from '@/stores/settings';
 import { authenticate } from '@/lib/biometric';
+import { seedDemoData } from '@/lib/demoSeed';
 import { palette } from '@/theme/tokens';
 
 /**
@@ -26,6 +27,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const [locked, setLocked] = useState(biometricLock);
 
   useEffect(() => init(), [init]);
+
+  // Seed believable demo data the first time we run without a backend.
+  useEffect(() => {
+    if (demo) seedDemoData();
+  }, [demo]);
 
   // Biometric lock on cold start + when app returns to foreground.
   useEffect(() => {
