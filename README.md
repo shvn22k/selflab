@@ -1,56 +1,109 @@
-# Welcome to your Expo app 👋
+# SelfLab
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Your private, single-user health & fitness companion — a live-in coach that
+tracks training, nutrition, activity, sleep, recovery and habits, and coaches
+you on your day in real time. Built for one person: you.
 
-## Get started
+> Tuned for a **fat-loss / get-lean** goal, dark-first and designed to feel like
+> a crafted product — not a template.
 
-1. Install dependencies
+## What's inside
 
-   ```bash
-   npm install
-   ```
+- **Dashboard** — Health Score, readiness, calories/macros, steps, water, sleep, weight trend, today's plan.
+- **Activity** — live GPS runs/walks/rides, step counter, a private activity feed, and Google Health Connect sync (steps, HR, HRV, sleep, weight).
+- **Fuel** — meal logging by search, **AI describe-a-meal**, manual entry and barcode scan; macros, calories and water.
+- **Train** — exercise library, live session logger with rest timer and PR tracking, templates, recommendations, and a weekly planner.
+- **Coach** — a 24/7 Gemini-powered chat that knows your data, morning/evening briefings (with read-aloud), and a hub to every tool.
+- **Sleep & recovery**, **wellbeing** (mood check-ins, breathwork, supplements), **habits & streaks**, **journal**, and **progress** (body metrics + photos).
 
-2. Start the app
+## Tech stack
 
-   ```bash
-   npx expo start
-   ```
+Expo (SDK 56) · React Native · TypeScript · Expo Router · custom design system ·
+Reanimated · react-native-svg charts · Supabase (Postgres + Auth + Storage +
+Edge Functions) · TanStack Query (offline-first) · Zustand · Gemini.
 
-In the output, you'll find options to open the app in a
+## Run it
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+> The app needs a **native dev build** (not Expo Go) because it uses Health
+> Connect, background location, sensors and maps. You also run fully in **demo
+> mode** with seeded local data before adding any backend.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Install
 
 ```bash
-npm run reset-project
+npm install
+cp .env.example .env   # then fill in the values below
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Supabase (cloud sync + AI)
 
-### Other setup steps
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Put the project URL + anon key into `.env`:
+   ```
+   EXPO_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+3. Apply the schema — either run the files in `supabase/migrations/` in the SQL
+   editor (in order), or with the CLI:
+   ```bash
+   supabase link --project-ref YOUR-REF
+   supabase db push
+   ```
+4. Deploy the AI edge functions and set your Gemini key as a secret (it never
+   ships in the app):
+   ```bash
+   supabase secrets set GEMINI_API_KEY=your-gemini-key
+   supabase functions deploy estimate-meal
+   supabase functions deploy ai-coach
+   ```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### 3. Google Maps (for live-activity maps on Android)
 
-## Learn more
+Create a key in Google Cloud Console (enable **Maps SDK for Android**) and add it
+to `.env` as `GOOGLE_MAPS_API_KEY` (used at build time only).
 
-To learn more about developing your project with Expo, look at the following resources:
+### 4. Build & run on your Android phone
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm i -g eas-cli && eas login          # free Expo account
+eas build --profile development --platform android
+# install the resulting APK on your phone, then:
+npx expo start --dev-client
+```
 
-## Join the community
+On first launch, sign up (or tap **demo mode**), finish onboarding, and grant
+Health Connect / location / notification permissions when prompted.
 
-Join our community of developers creating universal apps.
+## Demo mode
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Without Supabase credentials the app runs entirely on-device: a local store
+(`src/lib/localDb.ts`) backs every screen and is pre-seeded with a believable
+week of data, and the coach falls back to a local, data-grounded reply. Add the
+backend later and your account syncs to the cloud.
+
+## Project structure
+
+```
+src/
+  app/            Expo Router screens ((auth), (tabs), feature routes)
+  components/     UI kit, charts, tab bar
+  features/       cross-cutting hooks (useToday)
+  lib/            data layer, engines (nutrition/readiness/healthScore),
+                  supabase, gemini, health connect, notifications
+  stores/         zustand (auth, profile, settings)
+  theme/          design tokens
+supabase/
+  migrations/     schema + RLS + seed + storage
+  functions/      Gemini edge functions
+```
+
+## Scripts
+
+```bash
+npm start          # dev server (use --dev-client for the native build)
+npx tsc --noEmit   # typecheck
+```
+
+---
+
+Private project — built for one user.
