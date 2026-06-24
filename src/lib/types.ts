@@ -266,6 +266,14 @@ export interface Checkin {
   note: string | null;
 }
 
+export interface MeditationSession {
+  id: string;
+  kind: 'meditation' | 'breathwork';
+  minutes: number | null;
+  preset: string | null;
+  created_at: string;
+}
+
 export interface AiMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
