@@ -35,12 +35,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'ACCESS_BACKGROUND_LOCATION',
       'FOREGROUND_SERVICE',
       'FOREGROUND_SERVICE_LOCATION',
+      'INTERNET',
     ],
-    config: {
-      googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_API_KEY ?? '',
-      },
-    },
   },
   web: {
     output: 'static',

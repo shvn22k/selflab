@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Pressable, Platform, Alert } from 'react-native';
+import { View, Pressable, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import MapView, { Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { LeafletMap } from '@/components/LeafletMap';
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import { X, Play, Pause, Square } from 'lucide-react-native';
@@ -108,25 +108,9 @@ export default function LiveActivity() {
     router.back();
   };
 
-  const region =
-    points.length > 0
-      ? { latitude: points[points.length - 1].lat, longitude: points[points.length - 1].lng, latitudeDelta: 0.005, longitudeDelta: 0.005 }
-      : undefined;
-
   return (
     <View style={{ flex: 1, backgroundColor: palette.bg }}>
-      <MapView
-        style={{ flex: 1 }}
-        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-        showsUserLocation
-        followsUserLocation
-        region={region}
-        customMapStyle={DARK_MAP}
-      >
-        {points.length > 1 && (
-          <Polyline coordinates={points.map((p) => ({ latitude: p.lat, longitude: p.lng }))} strokeColor={palette.primary} strokeWidth={5} />
-        )}
-      </MapView>
+      <LeafletMap points={points} follow style={{ flex: 1 }} />
 
       {/* close */}
       <Pressable
@@ -215,13 +199,3 @@ function ControlButton({ icon, onPress, primary }: { icon: React.ReactNode; onPr
     </Pressable>
   );
 }
-
-// Minimal dark map theme
-const DARK_MAP = [
-  { elementType: 'geometry', stylers: [{ color: '#0f1116' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#6a6f7a' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#0f1116' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#23262f' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0a0b0e' }] },
-  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-];

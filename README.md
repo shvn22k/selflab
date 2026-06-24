@@ -57,10 +57,10 @@ cp .env.example .env   # then fill in the values below
    supabase functions deploy ai-coach
    ```
 
-### 3. Google Maps (for live-activity maps on Android)
+### 3. Maps — nothing to do 🎉
 
-Create a key in Google Cloud Console (enable **Maps SDK for Android**) and add it
-to `.env` as `GOOGLE_MAPS_API_KEY` (used at build time only).
+Activity maps use **free OpenStreetMap tiles** (CARTO dark) rendered with Leaflet
+in a WebView — no API key, no billing, no Google Cloud account.
 
 ### 4. Build & run on your Android phone
 

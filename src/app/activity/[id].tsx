@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { View, Pressable, ScrollView, Platform } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import MapView, { Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { LeafletMap } from '@/components/LeafletMap';
 import { format } from 'date-fns';
 import { X, Timer, Flame, Mountain, Gauge, MapPin } from 'lucide-react-native';
 import { Text, Card } from '@/components/ui';
@@ -19,18 +19,7 @@ export default function ActivityDetail() {
   const activities = useList<Activity>('activities', { eq: { id: String(id) } });
   const a = activities.data?.[0];
 
-  const region = useMemo(() => {
-    const pts = a?.route ?? [];
-    if (!pts.length) return null;
-    const lats = pts.map((p) => p.lat);
-    const lngs = pts.map((p) => p.lng);
-    return {
-      latitude: (Math.min(...lats) + Math.max(...lats)) / 2,
-      longitude: (Math.min(...lngs) + Math.max(...lngs)) / 2,
-      latitudeDelta: Math.max(Math.max(...lats) - Math.min(...lats), 0.01) * 1.4,
-      longitudeDelta: Math.max(Math.max(...lngs) - Math.min(...lngs), 0.01) * 1.4,
-    };
-  }, [a?.route]);
+  const routePoints = useMemo(() => (a?.route ?? []).map((p) => ({ lat: p.lat, lng: p.lng })), [a?.route]);
 
   return (
     <View style={{ flex: 1, backgroundColor: palette.bg, paddingTop: insets.top + spacing.sm }}>
@@ -54,19 +43,8 @@ export default function ActivityDetail() {
               {format(new Date(a.started_at), 'EEEE, d MMM · HH:mm')}
             </Text>
 
-            {region ? (
-              <View style={{ height: 220, borderRadius: radius.xl, overflow: 'hidden', marginBottom: spacing.lg, borderWidth: 1, borderColor: palette.border }}>
-                <MapView
-                  style={{ flex: 1 }}
-                  provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-                  initialRegion={region}
-                  scrollEnabled={false}
-                  pitchEnabled={false}
-                  rotateEnabled={false}
-                >
-                  <Polyline coordinates={(a.route ?? []).map((p) => ({ latitude: p.lat, longitude: p.lng }))} strokeColor={palette.primary} strokeWidth={4} />
-                </MapView>
-              </View>
+            {routePoints.length > 1 ? (
+              <LeafletMap points={routePoints} style={{ height: 220, borderRadius: radius.xl, marginBottom: spacing.lg, borderWidth: 1, borderColor: palette.border }} />
             ) : (
               <Card style={{ alignItems: 'center', paddingVertical: spacing['2xl'], marginBottom: spacing.lg }}>
                 <MapPin size={24} color={palette.textTertiary} />
