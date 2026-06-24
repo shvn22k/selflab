@@ -15,3 +15,4 @@ export { Skeleton } from './Skeleton';
 export { Screen } from './Screen';
 export { ListRow } from './ListRow';
 export { Sheet } from './Sheet';
+export { Input } from './Input';
