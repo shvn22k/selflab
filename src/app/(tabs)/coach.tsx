@@ -6,7 +6,7 @@ import Animated, { FadeInUp, FadeIn } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Speech from 'expo-speech';
 import * as Haptics from 'expo-haptics';
-import { Sparkles, Send, Volume2, Sun, Moon, Bed, CircleDot, HeartPulse, BookOpen, LineChart as LineChartIcon, CalendarDays } from 'lucide-react-native';
+import { Sparkles, Send, Volume2, Sun, Moon, Bed, CircleDot, HeartPulse, BookOpen, LineChart as LineChartIcon, CalendarDays, Settings as SettingsIcon } from 'lucide-react-native';
 import { Text, Card } from '@/components/ui';
 import { useToday } from '@/features/today';
 import { useList, useInsert, useUpsert } from '@/lib/hooks';
@@ -96,12 +96,15 @@ export default function Coach() {
             <LinearGradient colors={gradients.lime} style={{ width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' }}>
               <Sparkles size={22} color={palette.textInverse} />
             </LinearGradient>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text variant="h2">{coachName}</Text>
               <Text variant="caption" color="textTertiary">
                 {greeting()}, {t.profile?.display_name ?? 'there'}
               </Text>
             </View>
+            <Pressable onPress={() => router.push('/settings')} hitSlop={10} style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: palette.surfaceElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: palette.border }}>
+              <SettingsIcon size={18} color={palette.textSecondary} />
+            </Pressable>
           </View>
 
           {/* briefing */}
